@@ -45,7 +45,7 @@ impl Default for TokioTasksPlugin {
     /// Configures the plugin to build a new Tokio [`Runtime`] with both IO and timer functionality
     /// enabled. On the wasm32 architecture, the [`Runtime`] will be the current-thread runtime, on all other
     /// architectures the [`Runtime`] will be the multi-thread runtime.
-    /// 
+    ///
     /// The default schedule label is [`Update`].
     fn default() -> Self {
         Self {
@@ -232,9 +232,7 @@ impl TaskContext {
     {
         let (output_tx, output_rx) = tokio::sync::oneshot::channel();
         if self.update_run_tx.send(Box::new(move |ctx| {
-            if output_tx.send(runnable(ctx)).is_err() {
-                panic!("Failed to sent output from operation run on main thread back to waiting task");
-            }
+            let _ = output_tx.send(runnable(ctx));
         })).is_err() {
             panic!("Failed to send operation to be run on main thread");
         }
